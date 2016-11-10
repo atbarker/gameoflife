@@ -104,7 +104,12 @@ function getMouseY() {
 
 function keyPressed(){
   if (keyCode === ENTER){
-    preload = false;
+    if (preload === true){
+      preload = false;
+    }else {
+      preload = true;
+      wipe();
+    }
   }
 }
 
@@ -119,6 +124,16 @@ function init() {
       next[i][j] = 0;
       interactive[i][j] = 0;
       cellarray[i][j] = generateColor();
+    }
+  }
+}
+
+function wipe() {
+  for (var i = 0; i < columns; i++){
+    for (var j = 0; j < rows; j++){
+      next[i][j] = 0;
+      interactive[i][j] = 0;
+      cellarray[i][j] = 0;
     }
   }
 }
@@ -171,8 +186,8 @@ function generate() {
       }
     }
   }
-  wait(100);
-  // Swap!
+  if (preload === false)
+  	wait(100);
   var temp = board;
   board = next;
   next = temp;
