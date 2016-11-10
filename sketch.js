@@ -6,6 +6,7 @@ var board;
 var next;
 var interactive;
 var cellarray;
+var preload;
 
 
 function setup() {
@@ -35,6 +36,7 @@ function setup() {
   for (i = 0; i < columns; i++) {
     cellarray[i] = new Array(rows);
   }
+  preload = true;
   init();
 }
 
@@ -56,23 +58,40 @@ function draw() {
 function mousePressed() {
   locX = getMouseX();
   locY = getMouseY();
-  if (board[locX][locY] == 0)
+  if (preload === false){
+    if (board[locX][locY] == 0)
       interactive[locX][locY] = 1;
       interactive[locX-1][locY] = 1;
       interactive[locX+1][locY] = 1;
       interactive[locX][locY+1] = 1;
       interactive[locX][locY-1] = 1;
+  } else if (preload === true) {
+     if (board[locX][locY] == 0){
+      interactive[locX][locY] = 1;
+    }else {
+      interactive[locX][locY] = 0;
+    }
+  }
 }
 
 function mouseDragged() {
   locX = getMouseX();
   locY = getMouseY();
-  if (board[locX][locY] == 0)
+  if (preload === false) {
+  if (board[locX][locY] == 0){
       interactive[locX][locY] = 1;
       interactive[locX-1][locY-1] = 1;
       interactive[locX+1][locY+1] = 1;
       interactive[locX-1][locY+1] = 1;
       interactive[locX+1][locY-1] = 1;
+  }
+  }else if (preload === true) {
+     if (board[locX][locY] == 0){
+      interactive[locX][locY] = 1;
+    }else {
+      interactive[locX][locY] = 0;
+    }
+  }
 }
 
 function getMouseX() {
@@ -81,6 +100,12 @@ function getMouseX() {
 
 function getMouseY() {
   return floor(mouseY/w);
+}
+
+function keyPressed(){
+  if (keyCode === ENTER){
+    preload = false;
+  }
 }
 
 // Fill board randomly
@@ -116,6 +141,7 @@ function generate() {
       // we added it in the above loop
       neighbors -= board[x][y];
       // Rules of Life
+      if (preload === false){
       if      ((board[x][y] == 1) && (neighbors <  2)){
         next[x][y] = 0;           // Loneliness
       }
@@ -132,7 +158,16 @@ function generate() {
       }
       else {
         next[x][y] = board[x][y];
-        generateRandom(x, y); // Stasis
+        //generateRandom(x, y); // Stasis
+      }
+      } else if (preload === true){
+        if (interactive[x][y] == 1){
+          next[x][y] = 1;
+        }else if (interactive[x][y] == 0){
+          next[x][y] = 0;
+        }else {
+          next[x][y] = board[x][y];
+        }
       }
     }
   }
